@@ -32,7 +32,7 @@ Acceptor::~Acceptor()
     delete acceptch;
 }
 
-// 将监听独立出来，保证初始化的时候回调函数已经设置完成
+// 将监听独立出来，保证初始化的时候Channel 回调函数已经设置完成
 void Acceptor::startlisten()
 {
     acceptch->setevent(EPOLLIN | EPOLLET);

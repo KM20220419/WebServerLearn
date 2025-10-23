@@ -11,11 +11,13 @@
 
 server::server(Eventloop *loop) : eventloop(loop)
 {
-    Acceptor *accept = new Acceptor(eventloop);
+    accept = new Acceptor(eventloop);
 
     // 这里使用_1作为一个占位符，其参数随函数的调用传入，因此返回的函数类型为void(Socket*)
     // std::function<void()> listenfun = std::bind(&server::NewConnection, this, sock);
     // 这里固定了参数为sock，因此函数类型为void()
+
+    // 而这里使用了占位符
     std::function<void(Socket *)> listenfun = std::bind(&server::NewConnection, this, std::placeholders::_1);
 
     // 将接受连接的函数交给accept保存
@@ -27,9 +29,7 @@ server::server(Eventloop *loop) : eventloop(loop)
 
 server::~server()
 {
-    delete sock;
-    delete listenChannel;
-    delete eventloop;
+    delete accept;
 }
 
 void server::HandleEvent(int fd)
@@ -68,7 +68,7 @@ void server::NewConnection(Socket *listensock)
     InterAdd inter;
     // ***这样写会在函数结束时析构套接字***
     // Socket newsoc(listensock->accept(&inter))
-    // 符合面向对象思想 建立clientfd 套接字
+    // 符合面向对象思想 建立clientfd 套接字  但是会出现内存泄漏
     Socket *newsoc = new Socket(listensock->accept(&inter));
     newsoc->nonblock();
 
