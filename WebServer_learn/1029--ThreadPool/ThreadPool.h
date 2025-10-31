@@ -1,7 +1,8 @@
+#pragma once
 #include <mutex>
 #include <condition_variable>
 #include <functional>
-#include " TaskQueueQ.h"
+#include "TaskQueue.h"
 
 class TaskQueue;
 class ThreadPool
@@ -13,6 +14,7 @@ public:
     // 这里使用静态成员函数，确保可以使用pthread_create
     static void *managerfun(void *args);
     static void *workerfun(void *args);
+    void addtask_thread(std::function<void()> task);
     void killthread();
 
 private:
